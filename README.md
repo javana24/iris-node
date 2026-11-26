@@ -27,6 +27,8 @@ El orden se cambia con `AI_PROVIDERS` sin tocar código.
 | GET | `/api/health` | | `{ok, providers:[{name, ok, model, error?}]}` (503 si no hay ninguno disponible) |
 | GET | `/api/models` | | Proveedores configurados y su orden |
 
+Las peticiones tienen un límite por IP (60 mensajes/minuto y 600/hora en el chat; pensado para un aula entera detrás de la misma IP). Si se supera, se responde `429` con `Retry-After`. Para un límite global, añade también una regla de Rate Limit en Vercel → Firewall.
+
 `safetyAlert` solo se activa con riesgo alto real (agresión, amenazas graves, suicidio/autolesión) en el **último** mensaje de la persona usuaria, o si el modelo lo valora como `urgent`. Los mensajes de la pareja simulada nunca disparan la alerta: para eso están las banderas rojas.
 
 ## Variables de entorno (Vercel → Settings → Environment Variables)
