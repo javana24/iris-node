@@ -21,6 +21,9 @@ async function checkProvider(provider, deep) {
         json: true
       });
       result.generation = { ms: Date.now() - started, output: String(output).slice(0, 80) };
+      if (provider.lastRateLimit) {
+        result.rateLimit = provider.lastRateLimit;
+      }
     }
     return { ...result, ok: true };
   } catch (error) {
