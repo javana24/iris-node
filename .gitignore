@@ -4,3 +4,6 @@ node_modules/
 .env.local
 .env*.local
 .vercel
+
+# Documentos fuente del instituto (solo se sube el JSON generado)
+data/contenido-instituto/
