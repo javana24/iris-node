@@ -1,30 +1,24 @@
 import assert from "node:assert/strict";
-import { afterEach, describe, it } from "node:test";
+import { describe, it } from "node:test";
 import { isAuthorizedRequest, shouldRequireApiKey } from "../lib/interfaces/http-auth.js";
 
-const originalApiKey = process.env.IRIS_API_KEY;
-const originalRequireApiKey = process.env.IRIS_REQUIRE_API_KEY;
-
-afterEach(() => {
-  process.env.IRIS_API_KEY = originalApiKey;
-  process.env.IRIS_REQUIRE_API_KEY = originalRequireApiKey;
-});
-
 describe("http auth policy", () => {
-  it("keeps public chat access by default for web clients", () => {
-    process.env.IRIS_API_KEY = "secret";
-    delete process.env.IRIS_REQUIRE_API_KEY;
-
-    assert.equal(shouldRequireApiKey(), false);
-    assert.equal(isAuthorizedRequest({ headers: {} }), true);
+  it("keeps public access by default for web and app clients", () => {
+    const env = { IRIS_API_KEY: "secret" };
+    assert.equal(shouldRequireApiKey(env), false);
+    assert.equal(isAuthorizedRequest({ headers: {} }, env), true);
   });
 
-  it("requires bearer token only when strict auth is enabled", () => {
-    process.env.IRIS_API_KEY = "secret";
-    process.env.IRIS_REQUIRE_API_KEY = "true";
+  it("requires the bearer token when strict auth is enabled", () => {
+    const env = { IRIS_API_KEY: "secret", IRIS_REQUIRE_API_KEY: "true" };
+    assert.equal(shouldRequireApiKey(env), true);
+    assert.equal(isAuthorizedRequest({ headers: {} }, env), false);
+    assert.equal(isAuthorizedRequest({ headers: { authorization: "Bearer wrong!" } }, env), false);
+    assert.equal(isAuthorizedRequest({ headers: { authorization: "Bearer secret" } }, env), true);
+  });
 
-    assert.equal(shouldRequireApiKey(), true);
-    assert.equal(isAuthorizedRequest({ headers: {} }), false);
-    assert.equal(isAuthorizedRequest({ headers: { authorization: "Bearer secret" } }), true);
+  it("denies access instead of staying open when strict auth has no key", () => {
+    const env = { IRIS_REQUIRE_API_KEY: "true" };
+    assert.equal(isAuthorizedRequest({ headers: { authorization: "Bearer " } }, env), false);
   });
 });

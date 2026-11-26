@@ -1,8 +1,14 @@
 {
   "name": "iris-api",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "description": "Backend de IRIS: IA del consejero, simulador de pareja celosa e informe de entrenamiento",
   "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "dev": "node scripts/dev-server.js"
   }
 }
