@@ -13,7 +13,7 @@ Web / App Android
   -> https://<proyecto>.vercel.app/api/chat
   -> iris-node (Vercel)
        1º Ollama en el Spark del instituto  (https://ollama.irisapp.es, Cloudflare Tunnel)
-       2º Groq (respaldo gratuito, Llama 3.3 70B) si el Spark falla o tarda
+       2º Groq (respaldo gratuito, gpt-oss-120b) si el Spark falla o tarda
 ```
 
 El orden se cambia con `AI_PROVIDERS` sin tocar código.
@@ -39,7 +39,7 @@ Ver [.env.example](.env.example).
 | `OLLAMA_BASE_URL` | `https://ollama.irisapp.es` |
 | `OLLAMA_MODEL` | `llama3.1:latest` (o el modelo nuevo instalado en el Spark) |
 | `GROQ_API_KEY` | key gratuita de https://console.groq.com/keys |
-| `GROQ_MODEL` | `llama-3.3-70b-versatile` |
+| `GROQ_MODEL` | `openai/gpt-oss-120b` (por defecto; no hace falta ponerla) |
 
 ### Mejorar el modelo del Spark
 
