@@ -38,6 +38,24 @@ describe("rate limit", () => {
     assert.equal(getClientId({ headers: { "x-forwarded-for": "9.9.9.9, 10.0.0.1" } }), "9.9.9.9");
   });
 
+  it("counts each request once even with several rules", async () => {
+    const handler = createJsonEndpoint({
+      name: "Multi",
+      method: "POST",
+      rateLimits: [{ limit: 3, windowMs: 60000 }, { limit: 100, windowMs: 3600000 }],
+      validate: () => ({ ok: true, value: {} }),
+      handle: async () => ({ ok: true })
+    });
+    const req = { method: "POST", headers: { "x-forwarded-for": "6.6.6.6" }, body: {} };
+    const statuses = [];
+    for (let i = 0; i < 4; i += 1) {
+      const res = fakeRes();
+      await handler(req, res);
+      statuses.push(res.statusCode);
+    }
+    assert.deepEqual(statuses, [200, 200, 200, 429]);
+  });
+
   it("returns 429 from an endpoint once the limit is reached", async () => {
     const handler = createJsonEndpoint({
       name: "Test",
